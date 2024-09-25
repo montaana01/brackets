@@ -20,13 +20,21 @@ module.exports = function check(str, bracketsConfig) {
 
         for (let [open, close] of bracketsConfig) {
             if (bracket === open) {
-                // все открывающиеся проходим и ждем закрывающую, которую кидаем в лист ожидания
-                waitingList.push(close);
+                // если скобка может быть как открывающей, так и закрывающей
+                if (open === close) {
+                    if (waitingList.length > 0 && waitingList[waitingList.length - 1] === bracket) {
+                        waitingList.pop();
+                    } else {
+                        waitingList.push(bracket);
+                    }
+                } else {
+                    // все открывающиеся добавляем в лист ожидания
+                    waitingList.push(close);
+                }
                 isOpening = true;
                 break;
             }
         }
-
         if (!isOpening) {
             if (waitingList.length === 0 || waitingList.pop() !== bracket) {
                 return false;
